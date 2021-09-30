@@ -1,3 +1,17 @@
+# Spark 3 cross building with Scala 2.12.15
+
+```
+sbt
+> ++ 3.0.2
+> compile
+> fatJar / assembly
+```
+
+```
+Jar at fatJar/target/scala-3.0.2/fatJar-assembly-0.22.1-SNAPSHOT.jar
+```
+
+
 # Apache Spark SQL connector for Google BigQuery (Beta)
 
 <!--- TODO(#2): split out into more documents. -->

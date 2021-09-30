@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-lazy val scala211Version = "2.11.12"
-lazy val scala212Version = "2.12.10"
-lazy val sparkVersion = "2.4.0"
+lazy val scala212Version = "2.12.15"
+lazy val sparkVersion = "3.1.2"
 lazy val grpcVersion = "1.37.1"
 // should match the dependency from grpc-netty
 lazy val nettyVersion = "4.1.65.Final"
@@ -26,9 +25,9 @@ lazy val artifactVersion = "0.22.1-SNAPSHOT"
 lazy val commonSettings = Seq(
   organization := "com.google.cloud.spark",
   version := artifactVersion,
-  scalaVersion := scala211Version,
-  crossScalaVersions := Seq(scala211Version, scala212Version),
-  dependencyOverrides ++= Set("org.slf4j" % "slf4j-api" % "1.7.16" % "provided",
+  scalaVersion := scala212Version,
+  crossScalaVersions := Seq("2.12.15", "3.0.2"),
+  dependencyOverrides ++= Seq("org.slf4j" % "slf4j-api" % "1.7.16" % "provided",
     "com.google.guava" % "guava" % "30.1.1-jre",
     "io.netty" % "netty-codec-http2" % nettyVersion,
     "io.netty" % "netty-handler-proxy" % nettyVersion)
@@ -60,8 +59,8 @@ lazy val commonTestDependencies = Seq(
   "com.google.api" % "gax-grpc" % "1.64.0" exclude("io.grpc", "grpc-netty-shaded"),
   "com.google.guava" % "guava" % "30.1.1-jre",
 
-  "org.scalatest" %% "scalatest" % "3.1.0" % "test",
-  "org.mockito" %% "mockito-scala-scalatest" % "1.10.6" % "test",
+  "org.scalatest" % "scalatest_2.12" % "3.1.0" % "test",
+  "org.mockito" % "mockito-scala-scalatest_2.12" % "1.10.6" % "test",
 
   "junit" % "junit" % "4.13" % "test",
   "com.novocode" % "junit-interface" % "0.11" % "test",
@@ -69,7 +68,7 @@ lazy val commonTestDependencies = Seq(
 )
 
 val sparkBigquerySupportZipFile = IO.zip(
-  allSubpaths(new File("pythonlib")),
+  Path.allSubpaths(new File("pythonlib")),
   new File("fatJar/spark-bigquery-support-" + artifactVersion +".zip"))
 
 lazy val spark3support = (project in file("spark3support"))
@@ -79,8 +78,8 @@ lazy val spark3support = (project in file("spark3support"))
     publishSettings,
     name := "spark3support",
     libraryDependencies ++= Seq(
-      "org.apache.spark" % "spark-core_2.12" % "3.0.0" % "provided",
-      "org.apache.spark" % "spark-sql_2.12" % "3.0.0" % "provided")
+      "org.apache.spark" % "spark-core_2.12" % "3.1.2" % "provided",
+      "org.apache.spark" % "spark-sql_2.12" % "3.1.2" % "provided")
   )
 
 lazy val connector = (project in file("connector"))
@@ -103,9 +102,9 @@ lazy val connector = (project in file("connector"))
       Seq(file)
     }.taskValue,
     libraryDependencies ++= (commonTestDependencies ++ Seq(
-      "org.apache.spark" %% "spark-core" % sparkVersion % "provided",
-      "org.apache.spark" %% "spark-sql" % sparkVersion % "provided",
-      "org.apache.spark" %% "spark-mllib" % sparkVersion % "provided",
+      "org.apache.spark" % "spark-core_2.12" % "3.1.2" % "provided",
+      "org.apache.spark" % "spark-sql_2.12" % "3.1.2" % "provided",
+      "org.apache.spark" % "spark-mllib_2.12" % "3.1.2" % "provided",
       "org.apache.beam" % "beam-sdks-java-io-hadoop-common" % "2.28.0"
         exclude("org.apache.beam", "beam-sdks-java-core")
         exclude("org.checkerframework", "checker-qual"),
@@ -140,7 +139,7 @@ lazy val connector = (project in file("connector"))
       // Keep in sync with com.google.cloud
       "com.fasterxml.jackson.core" % "jackson-databind" % "2.11.3",
       "com.fasterxml.jackson.module" % "jackson-module-paranamer" % "2.11.3",
-      "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.11.3",
+      "com.fasterxml.jackson.module" % "jackson-module-scala_2.12" % "2.13.0-rc3-preview2",
 
       // Netty, with a version supporting Java 11
       "io.netty" % "netty-all" % nettyVersion % "provided",
@@ -155,7 +154,7 @@ lazy val connector = (project in file("connector"))
         exclude("com.google.cloud.bigdataoss", "util-hadoop"),
       // scalastyle:on
       // test
-      "org.apache.spark" %% "spark-avro" % sparkVersion % "test"
+      "org.apache.spark" % "spark-avro_2.12" % "3.1.2" % "test"
       ))
       .map(_.excludeAll(excludedOrgs.map(ExclusionRule(_)): _*))
   )
@@ -164,7 +163,7 @@ lazy val fatJar = project
   .enablePlugins(AssemblyPlugin)
   .settings(
     commonSettings,
-    skip in publish := true,
+    skip / publish := true,
     assemblyOption in assembly := (assemblyOption in assembly).value.copy(includeScala = false),
     assemblyShadeRules in assembly := (
       notRenamed.map(prefix => ShadeRule.rename(s"$prefix**" -> s"$prefix@1"))
