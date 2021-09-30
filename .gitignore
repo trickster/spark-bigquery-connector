@@ -1,5 +1,5 @@
-.bsp
-*.zip
+#.bsp
+#*.zip
 *.class
 *.log
 
