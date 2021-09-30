@@ -26,7 +26,7 @@ lazy val commonSettings = Seq(
   organization := "com.google.cloud.spark",
   version := artifactVersion,
   scalaVersion := scala212Version,
-  crossScalaVersions := Seq("2.12.15", "3.0.2"),
+  crossScalaVersions := Seq("2.12.15", "2.13.6", "3.0.2"),
   dependencyOverrides ++= Seq("org.slf4j" % "slf4j-api" % "1.7.16" % "provided",
     "com.google.guava" % "guava" % "30.1.1-jre",
     "io.netty" % "netty-codec-http2" % nettyVersion,

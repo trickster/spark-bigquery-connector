@@ -5,6 +5,10 @@ sbt
 > ++ 3.0.2
 > compile
 > fatJar / assembly
+
+> ++ 2.13.6
+> compile
+> fatJar / assembly
 ```
 
 ```
